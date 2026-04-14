@@ -59,7 +59,16 @@ class PrintBatchesApi {
   return result;
  }
  static Future<List> getAllBatchesByRouter(String routerSerial)async{
-  return await DBApi.select("batches","router_serial='$routerSerial'");
+  // return await DBApi.select("batches","router_serial='$routerSerial'");
+  List batches=await DBApi.select("batches","router_serial like '$routerSerial'");
+  List cards=await DBApi.select("cards");
+  List result= batches.map((b){
+    var c=cards.where((i)=>i["batch_id"]==b["id"]).toList();
+    var temp=Map.from(b);
+    temp["cards"]=c;
+    return temp;
+  }).toList();
+  return result;
   
  }
 

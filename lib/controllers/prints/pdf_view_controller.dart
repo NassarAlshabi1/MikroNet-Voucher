@@ -23,7 +23,7 @@ class PdfViewController extends GetxController {
     required this.saveFile,
   });
   Future<Uint8List>? pdfFuture;
-  String myLogo="Created By PrintNet_App_967735544175";
+  String myLogo="Created By MikroNet";
 
   @override
   void onInit() {

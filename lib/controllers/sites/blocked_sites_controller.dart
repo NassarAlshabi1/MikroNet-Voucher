@@ -81,7 +81,7 @@ class BlockedSitesController extends GetxController {
         if (response.status == true && response.data != null) {
           blockedList.value = response.data!;
         } else {
-          Get.snackbar("خطأ", response.message ?? "حدث خطأ في الجلب", snackPosition: SnackPosition.BOTTOM);
+          showMsgDialog(message: response.message,type: MsgType.error);
         }
       }
     } finally {
@@ -94,8 +94,8 @@ class BlockedSitesController extends GetxController {
     String name = nameCtrl.text.trim();
     String value = valueCtrl.text.trim();
 
-    if (value.isEmpty) {
-      Get.snackbar("تنبيه", "يرجى إدخال القيمة المراد حظرها");
+    if (value.isEmpty || name.isEmpty) {
+      showMsgDialog(message: "يرجى إدخال القيمة المراد حظرها",type: MsgType.warning);
       return;
     }
 
@@ -131,10 +131,9 @@ class BlockedSitesController extends GetxController {
         valueCtrl.clear();
         
         fetchBlockedData();
-        Get.snackbar("نجاح", "تمت إضافة الحظر بنجاح", backgroundColor: Colors.green.shade600, colorText: Colors.white);
+        showMsgDialog(message: "تمت إضافة الحظر بنجاح",type: MsgType.success);
       } else {
-        Get.snackbar("فشل", response.message ?? "حدث خطأ أثناء الإضافة");
-      }
+        showMsgDialog(message: response.message,type: MsgType.error);      }
     }
   }
 
@@ -153,9 +152,9 @@ class BlockedSitesController extends GetxController {
           
           if (response.status == true) {
             fetchBlockedData();
-            Get.snackbar("نجاح", "تم فك الحظر بنجاح", backgroundColor: Colors.green.shade600, colorText: Colors.white);
+            showMsgDialog(message: "تم فك الحظر بنجاح",type: MsgType.success);
           } else {
-            Get.snackbar("فشل", response.message ?? "حدث خطأ أثناء الحذف");
+            showMsgDialog(message: response.message,type: MsgType.error);
           }
         }
       },
