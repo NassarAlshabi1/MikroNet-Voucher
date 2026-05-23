@@ -28,10 +28,10 @@ RUN mkdir -p ${ANDROID_SDK_ROOT}/cmdline-tools && \
 RUN yes | sdkmanager --licenses > /dev/null && \
     sdkmanager \
         "platform-tools" \
-        "platforms;android-34" \
-        "build-tools;34.0.0"
+        "platforms;android-35" \
+        "build-tools;35.0.0"
 
-RUN git clone --depth 1 --branch 3.27.2 \
+RUN git clone --depth 1 --branch 3.27.0 \
         https://github.com/flutter/flutter.git ${FLUTTER_ROOT} && \
     flutter precache --android && \
     flutter config --no-analytics && \
