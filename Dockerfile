@@ -31,7 +31,7 @@ RUN yes | sdkmanager --licenses > /dev/null && \
         "platforms;android-35" \
         "build-tools;35.0.0"
 
-RUN git clone --depth 1 --branch 3.27.0 \
+RUN git clone --depth 1 --branch 3.27.2 \
         https://github.com/flutter/flutter.git ${FLUTTER_ROOT} && \
     flutter precache --android && \
     flutter config --no-analytics && \
