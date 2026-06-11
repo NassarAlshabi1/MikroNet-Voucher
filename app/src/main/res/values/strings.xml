@@ -1,0 +1,75 @@
+<resources>
+    <string name="app_name">MikroNet Voucher</string>
+
+    <!-- المصادقة -->
+    <string name="login">تسجيل الدخول</string>
+    <string name="register">إنشاء حساب</string>
+    <string name="logout">تسجيل الخروج</string>
+    <string name="email">البريد الإلكتروني</string>
+    <string name="password">كلمة المرور</string>
+    <string name="confirm_password">تأكيد كلمة المرور</string>
+    <string name="full_name">الاسم الكامل</string>
+    <string name="forgot_password">نسيت كلمة المرور؟</string>
+    <string name="no_account">ليس لديك حساب؟ أنشئ حساباً</string>
+    <string name="have_account">لديك حساب؟ سجّل الدخول</string>
+    <string name="welcome">مرحباً بك في MikroNet</string>
+    <string name="welcome_subtitle">إدارة شبكات المايكروتك وتوليد الكروت</string>
+
+    <!-- لوحة التحكم -->
+    <string name="dashboard">لوحة التحكم</string>
+    <string name="active_users">المستخدمون النشطون</string>
+    <string name="online_users">المتصلون الآن</string>
+    <string name="generated_cards">الكروت المولدة</string>
+    <string name="today_sales">مبيعات اليوم</string>
+
+    <!-- إحصائيات الراوتر الحية -->
+    <string name="router_stats_title">إحصائيات الراوتر</string>
+    <string name="stat_temperature">الحرارة</string>
+    <string name="stat_cpu">المعالج</string>
+    <string name="stat_voltage">الجهد</string>
+    <string name="stat_network_speed">سرعة الشبكة</string>
+    <string name="stat_uptime">وقت التشغيل</string>
+    <string name="stat_disk_space">مساحة القرص</string>
+    <string name="stat_memory">الذاكرة</string>
+    <string name="stat_active_users">المتصلون</string>
+
+    <!-- توليد الكروت -->
+    <string name="add_by_profile_title">توليد كروت بحسب البروفايل</string>
+    <string name="hint_profile">البروفايل</string>
+    <string name="hint_quantity">الكمية</string>
+    <string name="hint_user_len">طول اسم المستخدم</string>
+    <string name="hint_pass_len">طول كلمة المرور</string>
+    <string name="btn_generate">توليد الكروت</string>
+
+    <!-- رسائل عامة -->
+    <string name="loading">جاري التحميل...</string>
+    <string name="error_generic">حدث خطأ، حاول مرة أخرى</string>
+    <string name="field_required">هذا الحقل مطلوب</string>
+    <string name="invalid_email">بريد إلكتروني غير صحيح</string>
+    <string name="password_short">كلمة المرور يجب أن تكون 6 أحرف على الأقل</string>
+    <string name="password_mismatch">كلمتا المرور غير متطابقتين</string>
+
+    <!-- الإجراءات الإدارية -->
+    <string name="admin_actions">الإجراءات الإدارية</string>
+    <string name="manage_hotspot_users">إدارة مستخدمي Hotspot</string>
+    <string name="manage_hotspot_desc">عرض وإضافة وحذف المستخدمين</string>
+    <string name="backup_restore">النسخ الاحتياطي</string>
+    <string name="backup_desc">حفظ واستعادة إعدادات الراوتر</string>
+    <string name="maintenance">أدوات الصيانة</string>
+    <string name="maintenance_desc">محو الجلسات والكروت المنتهية</string>
+    <string name="interface_control">قطع البث</string>
+    <string name="interface_desc">تعطيل وتفعيل واجهات الشبكة</string>
+
+    <!-- إعداد الراوتر -->
+    <string name="router_setup">إعداد الراوتر</string>
+    <string name="router_name">اسم الراوتر</string>
+    <string name="router_host">عنوان IP</string>
+    <string name="router_port">منفذ API</string>
+    <string name="router_user">اسم المستخدم</string>
+    <string name="router_pass">كلمة المرور</string>
+    <string name="test_connection">اختبار الاتصال</string>
+    <string name="save">حفظ</string>
+    <string name="connection_success">نجح الاتصال بالراوتر:</string>
+    <string name="no_router">لم تُعدّ راوتراً بعد. اضغط لإعداده.</string>
+    <string name="manage_router">إدارة الراوتر</string>
+</resources>

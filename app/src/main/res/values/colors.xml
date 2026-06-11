@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- ألوان العلامة (ثابتة في الوضعين) -->
+    <color name="brand_primary">#1565C0</color>
+    <color name="brand_primary_dark">#0D47A1</color>
+    <color name="brand_accent">#00ACC1</color>
+    <color name="brand_success">#2E7D32</color>
+    <color name="brand_error">#D32F2F</color>
+    <color name="brand_warning">#EF6C00</color>
+
+    <!-- ألوان دلالية (تتبدّل بين النهاري/الليلي) - النهاري -->
+    <color name="surface_bg">#F4F6FA</color>
+    <color name="card_bg">#FFFFFF</color>
+    <color name="text_primary">#1A1C1E</color>
+    <color name="text_secondary">#5F6368</color>
+    <color name="divider">#E3E8EF</color>
+
+    <!-- خلفيات دوائر الأيقونات (شفافة خفيفة) -->
+    <color name="tint_primary_bg">#E3F0FF</color>
+    <color name="tint_accent_bg">#D8F5F8</color>
+    <color name="tint_success_bg">#E1F2E2</color>
+    <color name="tint_warning_bg">#FCEBD8</color>
+</resources>
