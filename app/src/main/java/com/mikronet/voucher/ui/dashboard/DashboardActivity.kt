@@ -4,13 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.auth.FirebaseAuth
 import com.mikronet.voucher.R
 import com.mikronet.voucher.data.local.RouterStore
-import com.mikronet.voucher.data.repository.AuthRepository
 import com.mikronet.voucher.databinding.ActivityDashboardBinding
 import com.mikronet.voucher.mikrotik.SystemService
-import com.mikronet.voucher.ui.auth.LoginActivity
 import com.mikronet.voucher.ui.backup.BackupActivity
 import com.mikronet.voucher.ui.hotspot.HotspotUsersActivity
 import com.mikronet.voucher.ui.interfaces.InterfaceControlActivity
@@ -31,7 +28,6 @@ import java.util.Locale
 class DashboardActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDashboardBinding
-    private val authRepo = AuthRepository()
     private lateinit var routerStore: RouterStore
     private val systemService = SystemService()
     private val scope = CoroutineScope(Dispatchers.Main + Job())
@@ -42,10 +38,6 @@ class DashboardActivity : AppCompatActivity() {
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
         routerStore = RouterStore(this)
-
-        val email = FirebaseAuth.getInstance().currentUser?.email
-        val name = email?.substringBefore("@")?.replaceFirstChar { it.uppercase() } ?: "مشرف"
-        binding.tvGreeting.text = "مرحباً، $name"
 
         binding.btnAddByProfile.setOnClickListener {
             if (!routerStore.isConfigured()) {
@@ -58,12 +50,6 @@ class DashboardActivity : AppCompatActivity() {
 
         binding.btnManageRouter.setOnClickListener {
             startActivity(Intent(this, RouterSetupActivity::class.java))
-        }
-
-        binding.btnLogout.setOnClickListener {
-            authRepo.logout()
-            startActivity(Intent(this, LoginActivity::class.java))
-            finishAffinity()
         }
 
         binding.btnHotspotUsers.setOnClickListener {

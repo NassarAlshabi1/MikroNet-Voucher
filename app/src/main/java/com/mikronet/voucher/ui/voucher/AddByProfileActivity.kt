@@ -31,7 +31,7 @@ class AddByProfileActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddByProfileBinding
     private val service = HotspotService()
     private val umService = UserManagerService()
-    private val salesRepo = SalesRepository()
+    private val salesRepo = SalesRepository(this)
     private lateinit var store: RouterStore
 
     private var mode: GenMode = GenMode.HOTSPOT

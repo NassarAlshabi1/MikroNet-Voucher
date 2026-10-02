@@ -1,10 +1,12 @@
 package com.mikronet.voucher.data.repository
 
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
-import kotlinx.coroutines.tasks.await
+import android.content.Context
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.json.JSONArray
+import org.json.JSONObject
 import java.util.Date
+import java.util.UUID
 
 data class SaleRecord(
     val id: String = "",
@@ -17,54 +19,75 @@ data class SaleRecord(
     val userId: String = ""
 )
 
-class SalesRepository {
+/**
+ * حفظ وسجلّ المبيعات **محلياً** على الجهاز (SharedPreferences بصيغة JSON)
+ * سجل محلي بالكامل على الجهاز.
+ */
+class SalesRepository(private val context: Context) {
 
-    private val db = FirebaseFirestore.getInstance()
-    private val auth = FirebaseAuth.getInstance()
-    private val collection = db.collection("sales")
+    private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-    suspend fun saveSale(sale: SaleRecord): Result<String> {
-        return try {
-            val doc = collection.document()
-            val data = hashMapOf(
-                "profile" to sale.profile,
-                "quantity" to sale.quantity,
-                "totalAmount" to sale.totalAmount,
-                "note" to sale.note,
-                "routerName" to sale.routerName,
-                "createdAt" to sale.createdAt,
-                "userId" to (auth.currentUser?.uid ?: "")
-            )
-            doc.set(data).await()
-            Result.success(doc.id)
+    /** يحفظ عملية بيع في السجل المحلي ويعيد معرّفها. */
+    suspend fun saveSale(sale: SaleRecord): Result<String> = withContext(Dispatchers.IO) {
+        try {
+            val id = if (sale.id.isNotBlank()) sale.id else UUID.randomUUID().toString()
+            val record = JSONObject().apply {
+                put("id", id)
+                put("profile", sale.profile)
+                put("quantity", sale.quantity)
+                put("totalAmount", sale.totalAmount)
+                put("note", sale.note)
+                put("routerName", sale.routerName)
+                put("createdAt", sale.createdAt.time)
+                put("userId", sale.userId)
+            }
+
+            val arr = JSONArray(prefs.getString(KEY_SALES, "[]") ?: "[]")
+            val out = JSONArray()
+            out.put(record)
+            for (i in 0 until arr.length()) out.put(arr.getJSONObject(i))
+
+            // احتفظ بآخر MAX_RECORDS عملية فقط
+            val trimmed = JSONArray()
+            val count = minOf(out.length(), MAX_RECORDS)
+            for (i in 0 until count) trimmed.put(out.getJSONObject(i))
+
+            prefs.edit().putString(KEY_SALES, trimmed.toString()).apply()
+            Result.success(id)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    suspend fun getSales(): Result<List<SaleRecord>> {
-        return try {
-            val snapshot = collection
-                .whereEqualTo("userId", auth.currentUser?.uid ?: "")
-                .orderBy("createdAt", Query.Direction.DESCENDING)
-                .limit(100)
-                .get()
-                .await()
-            val sales = snapshot.documents.map { doc ->
-                SaleRecord(
-                    id = doc.id,
-                    profile = doc.getString("profile") ?: "",
-                    quantity = doc.getLong("quantity")?.toInt() ?: 0,
-                    totalAmount = doc.getDouble("totalAmount") ?: 0.0,
-                    note = doc.getString("note") ?: "",
-                    routerName = doc.getString("routerName") ?: "",
-                    createdAt = doc.getDate("createdAt") ?: Date(),
-                    userId = doc.getString("userId") ?: ""
+    /** يقرأ سجل المبيعات المحلي (الأحدث أولاً). */
+    suspend fun getSales(): Result<List<SaleRecord>> = withContext(Dispatchers.IO) {
+        try {
+            val arr = JSONArray(prefs.getString(KEY_SALES, "[]") ?: "[]")
+            val sales = mutableListOf<SaleRecord>()
+            for (i in 0 until arr.length()) {
+                val o = arr.getJSONObject(i)
+                sales.add(
+                    SaleRecord(
+                        id = o.optString("id", ""),
+                        profile = o.optString("profile", ""),
+                        quantity = o.optInt("quantity", 0),
+                        totalAmount = o.optDouble("totalAmount", 0.0),
+                        note = o.optString("note", ""),
+                        routerName = o.optString("routerName", ""),
+                        createdAt = Date(o.optLong("createdAt", System.currentTimeMillis())),
+                        userId = o.optString("userId", "")
+                    )
                 )
             }
             Result.success(sales)
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    companion object {
+        private const val PREFS_NAME = "mikronet_sales"
+        private const val KEY_SALES = "sales_json"
+        private const val MAX_RECORDS = 500
     }
 }

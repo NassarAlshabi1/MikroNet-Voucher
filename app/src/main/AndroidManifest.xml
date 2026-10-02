@@ -33,14 +33,6 @@
         </activity>
 
         <activity
-            android:name=".ui.auth.LoginActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.auth.RegisterActivity"
-            android:exported="false" />
-
-        <activity
             android:name=".ui.dashboard.DashboardActivity"
             android:exported="false" />
 

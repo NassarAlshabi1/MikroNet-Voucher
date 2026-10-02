@@ -1,20 +1,6 @@
 <resources>
     <string name="app_name">MikroNet Voucher</string>
 
-    <!-- المصادقة -->
-    <string name="login">تسجيل الدخول</string>
-    <string name="register">إنشاء حساب</string>
-    <string name="logout">تسجيل الخروج</string>
-    <string name="email">البريد الإلكتروني</string>
-    <string name="password">كلمة المرور</string>
-    <string name="confirm_password">تأكيد كلمة المرور</string>
-    <string name="full_name">الاسم الكامل</string>
-    <string name="forgot_password">نسيت كلمة المرور؟</string>
-    <string name="no_account">ليس لديك حساب؟ أنشئ حساباً</string>
-    <string name="have_account">لديك حساب؟ سجّل الدخول</string>
-    <string name="welcome">مرحباً بك في MikroNet</string>
-    <string name="welcome_subtitle">إدارة شبكات المايكروتك وتوليد الكروت</string>
-
     <!-- لوحة التحكم -->
     <string name="dashboard">لوحة التحكم</string>
     <string name="active_users">المستخدمون النشطون</string>
@@ -47,9 +33,6 @@
     <string name="loading">جاري التحميل...</string>
     <string name="error_generic">حدث خطأ، حاول مرة أخرى</string>
     <string name="field_required">هذا الحقل مطلوب</string>
-    <string name="invalid_email">بريد إلكتروني غير صحيح</string>
-    <string name="password_short">كلمة المرور يجب أن تكون 6 أحرف على الأقل</string>
-    <string name="password_mismatch">كلمتا المرور غير متطابقتين</string>
 
     <!-- الإجراءات الإدارية -->
     <string name="admin_actions">الإجراءات الإدارية</string>
