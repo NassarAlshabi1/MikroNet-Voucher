@@ -1,3 +1,5 @@
+import java.util.Base64
+
 plugins {
     alias(libs.plugins.android.application)
 }
@@ -39,7 +41,7 @@ android {
             when {
                 b64 != null && storePass != null && alias != null && keyPass != null -> {
                     val tmp = File.createTempFile("release-keystore", ".jks")
-                    tmp.writeBytes(java.util.Base64.getDecoder().decode(b64))
+                    tmp.writeBytes(Base64.getDecoder().decode(b64))
                     tmp.deleteOnExit()
                     storeFile = tmp
                     storePassword = storePass
