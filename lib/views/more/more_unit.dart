@@ -56,6 +56,24 @@ class MoreUnitPage extends GetView<MoreUnitController> {
                     color: const Color(0xFFF59E0B), // لون برتقالي تحذيري
                     onTap: controller.rebootSystem, // استدعاء الدالة من المتحكم
                   ),
+
+                  // الزر الثالث: التحكم بالواجهات
+                  MainActionCard(
+                    title: "التحكم بالواجهات",
+                    subtitle: "عرض واجهات الراوتر وتشغيل أو إيقاف كل واجهة",
+                    icon: Icons.settings_ethernet_rounded,
+                    color: const Color(0xFF0EA5E9), // سماوي للتشبيك
+                    onTap: controller.goToInterfaces,
+                  ),
+
+                  // الزر الرابع: أدوات الصيانة
+                  MainActionCard(
+                    title: "أدوات الصيانة",
+                    subtitle: "محو الجلسات، حذف المنتهين، وتصفير اليوزرمنجر",
+                    icon: Icons.build_rounded,
+                    color: const Color(0xFFEF4444), // أحمر تحذيري للصيانة
+                    onTap: controller.goToMaintenance,
+                  ),
                 ],
               ),
             ),

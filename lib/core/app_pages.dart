@@ -15,6 +15,10 @@ import 'package:mikronet/views/cards/profiles/add_profile_page.dart';
 import 'package:mikronet/views/cards/profiles/edit_profile_page.dart';
 import 'package:mikronet/views/more/backup_restore_page.dart';
 import 'package:mikronet/views/more/more_unit.dart';
+import 'package:mikronet/views/more/interfaces_page.dart';
+import 'package:mikronet/views/more/maintenance_page.dart';
+import 'package:mikronet/controllers/more/interfaces_controller.dart';
+import 'package:mikronet/controllers/more/maintenance_controller.dart';
 import 'package:mikronet/views/prints/batches/batches_list_page.dart';
 import 'package:mikronet/views/prints/templates/add_template_page.dart';
 import 'package:mikronet/views/prints/templates/edit_template_page.dart';
@@ -123,6 +127,8 @@ class AppRoutes {
 
   static const String more = '/more';
   static const String backup = '/more/backup';
+  static const String interfaces = '/more/interfaces';
+  static const String maintenance = '/more/maintenance';
   // مسارات إدارة المواقع
 }
 
@@ -276,6 +282,16 @@ class AppPages {
       name: AppRoutes.backup, 
       page: () => const BackupRestorePage(),
       binding: BindingsBuilder(() => Get.lazyPut(() => BackupRestoreController())),
+    ),
+    GetPage(
+      name: AppRoutes.interfaces,
+      page: () => const InterfacesPage(),
+      binding: BindingsBuilder(() => Get.lazyPut(() => InterfacesController())),
+    ),
+    GetPage(
+      name: AppRoutes.maintenance,
+      page: () => const MaintenancePage(),
+      binding: BindingsBuilder(() => Get.lazyPut(() => MaintenanceController())),
     ),
   ];
 }
