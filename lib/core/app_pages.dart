@@ -27,6 +27,8 @@ import 'package:mikronet/controllers/distributors/distributors_list_controller.d
 import 'package:mikronet/controllers/distributors/distributor_form_controller.dart';
 import 'package:mikronet/controllers/distributors/distributor_statement_controller.dart';
 import 'package:mikronet/controllers/reports/monitor_controller.dart';
+import 'package:mikronet/models/distributor_model.dart';
+import 'package:mikronet/models/maintenance_tools.dart';
 import 'package:mikronet/views/more/router_backup_page.dart';
 import 'package:mikronet/views/distributors/distributors_list_page.dart';
 import 'package:mikronet/views/distributors/distributor_form_page.dart';
@@ -391,12 +393,18 @@ class AppPages {
     GetPage(
       name: AppRoutes.distributorForm,
       page: () => const DistributorFormPage(),
-      binding: BindingsBuilder(() => Get.lazyPut(() => DistributorFormController())),
+      binding: BindingsBuilder(() => Get.lazyPut(
+        () => DistributorFormController(
+          Get.arguments is DistributorModel ? Get.arguments as DistributorModel : null,
+        ),
+      )),
     ),
     GetPage(
       name: AppRoutes.distributorStatement,
       page: () => const DistributorStatementPage(),
-      binding: BindingsBuilder(() => Get.lazyPut(() => DistributorStatementController())),
+      binding: BindingsBuilder(() => Get.lazyPut(
+        () => DistributorStatementController(Get.arguments as DistributorModel),
+      )),
     ),
     GetPage(
       name: AppRoutes.monitor,
