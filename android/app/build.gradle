@@ -30,11 +30,27 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        release {
+            // توقيع الإصدار من متغيرات البيئة في CI:
+            // KEYSTORE_FILE + KEYSTORE_PASSWORD + KEY_ALIAS + KEY_PASSWORD
+            def ksPath = System.getenv("KEYSTORE_FILE")
+            def storePass = System.getenv("KEYSTORE_PASSWORD")
+            def alias = System.getenv("KEY_ALIAS")
+            def keyPass = System.getenv("KEY_PASSWORD")
+            if (ksPath != null && storePass != null && alias != null && keyPass != null && file(ksPath).exists()) {
+                storeFile = file(ksPath)
+                storePassword = storePass
+                keyAlias = alias
+                keyPassword = keyPass
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
+            // يوقّع بمفتاح الإصدار إن توفّر، وإلا بمفتاح debug
+            signingConfig = signingConfigs.release.storeFile != null ? signingConfigs.release : signingConfigs.debug
         }
     }
 }

@@ -5,14 +5,25 @@ on:
     branches: [ "controller" ]
   workflow_dispatch:
 
+# صلاحية إنشاء/تحديث GitHub Releases
+permissions:
+  contents: write
+
 jobs:
   build:
-    name: Build Flutter Controller APK (arm64-v8a only)
+    name: Build, Sign & Release (arm64-v8a only)
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      # مفتاح التوقيع يُحفظ في الـ Cache ليبقى التوقيع نفسه عبر كل البناءات
+      - name: Restore release keystore (stable signing)
+        uses: actions/cache@v4
+        with:
+          path: .ci-keystore
+          key: controller-release-keystore-v1
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -22,6 +33,42 @@ jobs:
 
       - name: Setup Gradle (with cache)
         uses: gradle/actions/setup-gradle@v4
+
+      # التوقيع: من الـ Secrets إن وُجدت، وإلا مفتاح ذاتي يُولَّد مرة واحدة ويُخزَّن
+      - name: Prepare signing config
+        env:
+          KS_B64: ${{ secrets.KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.KEYSTORE_PASSWORD }}
+          KS_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KS_KEYPASS: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [ -n "$KS_B64" ] && [ -n "$KS_PASS" ] && [ -n "$KS_ALIAS" ] && [ -n "$KS_KEYPASS" ]; then
+            echo "SIGN_SOURCE=secrets" >> "$GITHUB_ENV"
+            TMPKS=$(mktemp /tmp/release-XXXXXX.jks)
+            echo "$KS_B64" | base64 -d > "$TMPKS"
+            echo "KEYSTORE_FILE=$TMPKS" >> "$GITHUB_ENV"
+            echo "KEYSTORE_PASSWORD=$KS_PASS" >> "$GITHUB_ENV"
+            echo "KEY_ALIAS=$KS_ALIAS" >> "$GITHUB_ENV"
+            echo "KEY_PASSWORD=$KS_KEYPASS" >> "$GITHUB_ENV"
+          else
+            mkdir -p .ci-keystore
+            if [ ! -f .ci-keystore/release.jks ]; then
+              GEN_PASS=$(head -c 32 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 24)
+              printf '%s' "$GEN_PASS" > .ci-keystore/pass.txt
+              keytool -genkeypair -v \
+                -keystore .ci-keystore/release.jks \
+                -alias mikronet-controller \
+                -keyalg RSA -keysize 2048 -validity 10950 \
+                -storepass "$GEN_PASS" -keypass "$GEN_PASS" \
+                -dname "CN=MikroNet Controller, OU=MikroNet, O=NassarAlshabi1, C=YE"
+            fi
+            P=$(cat .ci-keystore/pass.txt)
+            echo "SIGN_SOURCE=generated" >> "$GITHUB_ENV"
+            echo "KEYSTORE_FILE=$GITHUB_WORKSPACE/.ci-keystore/release.jks" >> "$GITHUB_ENV"
+            echo "KEYSTORE_PASSWORD=$P" >> "$GITHUB_ENV"
+            echo "KEY_ALIAS=mikronet-controller" >> "$GITHUB_ENV"
+            echo "KEY_PASSWORD=$P" >> "$GITHUB_ENV"
+          fi
 
       # إصدار Flutter نفسه الذي يستخدمه مؤلف المشروع (كما في Dockerfile)
       - name: Setup Flutter 3.27.2
@@ -40,9 +87,14 @@ jobs:
       - name: Build Release APK (arm64-v8a only)
         run: flutter build apk --release --target-platform android-arm64
 
+      - name: Verify signing
+        run: |
+          echo "Signing source: $SIGN_SOURCE"
+          $JAVA_HOME/bin/jarsigner -verify build/app/outputs/flutter-apk/app-release.apk | head -3
+
       - name: Rename APK
         run: |
-          VERSION=$(grep -oP '^version:\s*\K[0-9]+' pubspec.yaml | head -1)
+          VERSION=$(grep -oP '^version:\s*\K[0-9]+(\.[0-9]+)*' pubspec.yaml | head -1)
           mkdir -p output
           cp build/app/outputs/flutter-apk/app-release.apk \
              "output/MikroNet-Controller-v${VERSION}-arm64.apk"
@@ -54,3 +106,19 @@ jobs:
           name: MikroNet-Controller-arm64-APK
           path: output/*.apk
           if-no-files-found: error
+
+      # نشر الـ APK في صفحة GitHub Releases (رابط دائم، يُستبدل بكل بناء جديد)
+      - name: Publish to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: controller-latest
+          name: "MikroNet Controller (arm64) — آخر إصدار"
+          body: |
+            APK لفرع controller — للأجهزة الحديثة 64-bit فقط (arm64-v8a)
+
+            - Build: #${{ github.run_number }}
+            - Commit: ${{ github.sha }}
+            - موقّع بمفتاح إصدار ثابت (قابل للتحديث دون حذف النسخة السابقة)
+          prerelease: true
+          files: output/*.apk
+          overwrite_files: true
