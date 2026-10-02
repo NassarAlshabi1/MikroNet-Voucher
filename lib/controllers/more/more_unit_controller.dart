@@ -45,6 +45,26 @@ class MoreUnitController extends GetxController {
     Get.toNamed(AppRoutes.queues);
   }
 
+  // دالة الانتقال لنسخ الراوتر الاحتياطي الحقيقي
+  void goToRouterBackup() {
+    Get.toNamed(AppRoutes.routerBackup);
+  }
+
+  // دالة الانتقال لإدارة الموزعين والمحاسبة
+  void goToDistributors() {
+    Get.toNamed(AppRoutes.distributors);
+  }
+
+  // دالة الانتقال لمراقبة الشبكة المتقدمة
+  void goToMonitor() {
+    Get.toNamed(AppRoutes.monitor);
+  }
+
+  // دالة الانتقال لمركز أدوات الصيانة المتقدمة
+  void goToToolsHub() {
+    Get.toNamed(AppRoutes.toolsHub);
+  }
+
   // دالة إعادة تشغيل النظام (الراوتر)
   void rebootSystem() {
     showConfirmDialog(message: "هل انت متاكد من اعادة تشغيل النظام", onConfirm: _executeReboot);

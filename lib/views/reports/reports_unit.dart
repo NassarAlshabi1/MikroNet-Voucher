@@ -53,7 +53,17 @@ class ReportsUnitPage extends GetView<ReportsUnitController> {
                     icon: Icons.monitor_heart_rounded,
                     color: const Color(0xFF8B5CF6), // لون بنفسجي مميز لحالة النظام
                     onTap: controller.gotToSystemStatus, // التنقل باستخدام GetX
-                  ),
+
+                  const SizedBox(height: 15),
+
+                  // مراقبة الشبكة المتقدمة (حرارة + منافذ + حركة)
+                  MainActionCard(
+                    title: "مراقبة الشبكة",
+                    subtitle: "حرارة الراوتر، المنافذ، وحركة البيانات لحظيًا",
+                    icon: Icons.waves_rounded,
+                    color: const Color(0xFF7C3AED),
+                    onTap: controller.goToMonitor,
+                  ),                  ),
                 ],
               ),
             ),

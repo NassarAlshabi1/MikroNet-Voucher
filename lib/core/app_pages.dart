@@ -21,6 +21,27 @@ import 'package:mikronet/views/more/performance_page.dart';
 import 'package:mikronet/views/more/network_page.dart';
 import 'package:mikronet/views/more/firewall_page.dart';
 import 'package:mikronet/views/more/queue_page.dart';
+// ======== النسخ الاحتياطي، الموزعون، المراقبة، وأدوات الصيانة (من arena) ========
+import 'package:mikronet/controllers/more/router_backup_controller.dart';
+import 'package:mikronet/controllers/distributors/distributors_list_controller.dart';
+import 'package:mikronet/controllers/distributors/distributor_form_controller.dart';
+import 'package:mikronet/controllers/distributors/distributor_statement_controller.dart';
+import 'package:mikronet/controllers/reports/monitor_controller.dart';
+import 'package:mikronet/views/more/router_backup_page.dart';
+import 'package:mikronet/views/distributors/distributors_list_page.dart';
+import 'package:mikronet/views/distributors/distributor_form_page.dart';
+import 'package:mikronet/views/distributors/distributor_statement_page.dart';
+import 'package:mikronet/views/reports/monitor_page.dart';
+// ======== المستخدمون المنتهون ========
+import 'package:mikronet/controllers/cards/expired_users_controller.dart';
+import 'package:mikronet/views/cards/expired_users_page.dart';
+// ======== مركز أدوات الصيانة المتقدمة ========
+import 'package:mikronet/controllers/maintenance/maintenance_hub_controller.dart';
+import 'package:mikronet/controllers/maintenance/tool_list_controller.dart';
+import 'package:mikronet/controllers/maintenance/diagnostics_controller.dart';
+import 'package:mikronet/views/maintenance/maintenance_hub_page.dart';
+import 'package:mikronet/views/maintenance/tool_list_page.dart';
+import 'package:mikronet/views/maintenance/diagnostics_page.dart';
 import 'package:mikronet/views/cards/profiles/add_profile_page.dart';
 import 'package:mikronet/views/cards/profiles/edit_profile_page.dart';
 import 'package:mikronet/views/more/backup_restore_page.dart';
@@ -144,6 +165,23 @@ class AppRoutes {
   static const String network = '/more/network';
   static const String firewall = '/more/firewall';
   static const String queues = '/more/queues';
+
+  // ======== مسارات مزايا arena ========
+  static const String expiredUsers = '/cards/expired_users';
+  static const String routerBackup = '/more/router_backup';
+
+  // الموزعون والمحاسبة
+  static const String distributors = '/distributors';
+  static const String distributorForm = '/distributors/form';
+  static const String distributorStatement = '/distributors/statement';
+
+  // مراقبة الشبكة المتقدمة
+  static const String monitor = '/reports/monitor';
+
+  // مركز أدوات الصيانة المتقدمة (Torch/Sniffer/Log/العارض العام)
+  static const String toolsHub = '/maintenance';
+  static const String maintenanceTool = '/maintenance/tool';
+  static const String maintenanceDiagnostics = '/maintenance/diagnostics';
   // مسارات إدارة المواقع
 }
 
@@ -332,6 +370,59 @@ class AppPages {
       name: AppRoutes.queues,
       page: () => const QueuePage(),
       binding: BindingsBuilder(() => Get.lazyPut(() => QueueController())),
+    ),
+
+    // ======== مسارات مزايا arena ========
+    GetPage(
+      name: AppRoutes.expiredUsers,
+      page: () => const ExpiredUsersPage(),
+      binding: BindingsBuilder(() => Get.lazyPut(() => ExpiredUsersController())),
+    ),
+    GetPage(
+      name: AppRoutes.routerBackup,
+      page: () => const RouterBackupPage(),
+      binding: BindingsBuilder(() => Get.lazyPut(() => RouterBackupController())),
+    ),
+    GetPage(
+      name: AppRoutes.distributors,
+      page: () => const DistributorsListPage(),
+      binding: BindingsBuilder(() => Get.lazyPut(() => DistributorsListController())),
+    ),
+    GetPage(
+      name: AppRoutes.distributorForm,
+      page: () => const DistributorFormPage(),
+      binding: BindingsBuilder(() => Get.lazyPut(() => DistributorFormController())),
+    ),
+    GetPage(
+      name: AppRoutes.distributorStatement,
+      page: () => const DistributorStatementPage(),
+      binding: BindingsBuilder(() => Get.lazyPut(() => DistributorStatementController())),
+    ),
+    GetPage(
+      name: AppRoutes.monitor,
+      page: () => const MonitorPage(),
+      binding: BindingsBuilder(() => Get.lazyPut(() => MonitorController())),
+    ),
+    GetPage(
+      name: AppRoutes.toolsHub,
+      page: () => const MaintenanceHubPage(),
+      binding: BindingsBuilder(() => Get.lazyPut(() => MaintenanceHubController())),
+    ),
+    GetPage(
+      name: AppRoutes.maintenanceTool,
+      page: () => const ToolListPage(),
+      binding: BindingsBuilder(() => Get.lazyPut(
+        () => ToolListController(Get.arguments as MaintenanceTool),
+      )),
+    ),
+    GetPage(
+      name: AppRoutes.maintenanceDiagnostics,
+      page: () => const MaintenanceDiagnosticsPage(),
+      binding: BindingsBuilder(() => Get.lazyPut(
+        () => MaintenanceDiagnosticsController(
+          Get.arguments is DiagnosticTool ? Get.arguments as DiagnosticTool : null,
+        ),
+      )),
     ),
   ];
 }

@@ -108,6 +108,8 @@ class HomeController extends GetxController with GetSingleTickerProviderStateMix
   void goToSites() => Get.toNamed(AppRoutes.sites);
   void goToReports() => Get.toNamed(AppRoutes.reports);
   void goToMoreSettings() => Get.toNamed(AppRoutes.more);
+  void goToToolsHub() => Get.toNamed(AppRoutes.toolsHub);
+  void goToDistributors() => Get.toNamed(AppRoutes.distributors);
 
   void logout(){
     showConfirmDialog(message: "هل انت متاكد من قطع الاتصال", onConfirm: Get.back);

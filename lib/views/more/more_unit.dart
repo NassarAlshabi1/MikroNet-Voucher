@@ -122,6 +122,51 @@ class MoreUnitPage extends GetView<MoreUnitController> {
                     color: const Color(0xFFF59E0B), // برتقالي لإدارة السرعة
                     onTap: controller.goToQueues,
                   ),
+
+                  // عنوان قسم المزايا المتقدمة
+                  const SectionTitle(title: "مزايا متقدمة"),
+
+                  // النسخ الاحتياطي الحقيقي للراوتر
+                  MainActionCard(
+                    title: "نسخ الراوتر الاحتياطي",
+                    subtitle: "إنشاء نسخة إعدادات على الراوتر وتنزيلها أو استعادتها",
+                    icon: Icons.settings_backup_restore_rounded,
+                    color: const Color(0xFF1E3A8A),
+                    onTap: controller.goToRouterBackup,
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  // الموزعون والمحاسبة
+                  MainActionCard(
+                    title: "الموزعون والمحاسبة",
+                    subtitle: "نقاط البيع، الأرصدة، الأرباح، وكشوف الحساب PDF",
+                    icon: Icons.groups_rounded,
+                    color: const Color(0xFF10B981),
+                    onTap: controller.goToDistributors,
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  // مراقبة الشبكة المتقدمة
+                  MainActionCard(
+                    title: "مراقبة الشبكة المتقدمة",
+                    subtitle: "حرارة الراوتر، المنافذ، وحركة البيانات لحظيًا",
+                    icon: Icons.monitor_heart_rounded,
+                    color: const Color(0xFF7C3AED),
+                    onTap: controller.goToMonitor,
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  // مركز أدوات الصيانة المتقدمة
+                  MainActionCard(
+                    title: "الأدوات المتقدمة",
+                    subtitle: "Torch، تنقيط الحزم، السجل، الجيران، والعارض العام",
+                    icon: Icons.handyman_rounded,
+                    color: const Color(0xFF0F766E),
+                    onTap: controller.goToToolsHub,
+                  ),
                 ],
               ),
             ),
