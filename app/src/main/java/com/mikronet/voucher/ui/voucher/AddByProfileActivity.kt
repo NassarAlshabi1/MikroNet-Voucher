@@ -16,21 +16,29 @@ import com.mikronet.voucher.data.repository.SalesRepository
 import com.mikronet.voucher.databinding.ActivityAddByProfileBinding
 import com.mikronet.voucher.mikrotik.HotspotProfile
 import com.mikronet.voucher.mikrotik.HotspotService
+import com.mikronet.voucher.mikrotik.UserManagerService
 import kotlinx.coroutines.launch
 import java.util.Date
 
 /**
- * شاشة توليد كروت Hotspot بحسب البروفايل (اتصال مباشر بالراوتر).
+ * شاشة توليد كروت بحسب البروفايل (اتصال مباشر بالراوتر).
+ * تدعم نظامين: Hotspot المحلي و User Manager (RADIUS).
  */
 class AddByProfileActivity : AppCompatActivity() {
 
+    private enum class GenMode { HOTSPOT, USER_MANAGER }
+
     private lateinit var binding: ActivityAddByProfileBinding
     private val service = HotspotService()
+    private val umService = UserManagerService()
     private val salesRepo = SalesRepository()
     private lateinit var store: RouterStore
 
+    private var mode: GenMode = GenMode.HOTSPOT
     private var profiles: List<HotspotProfile> = emptyList()
     private var selectedProfile: HotspotProfile? = null
+    private var umProfiles: List<UserManagerService.UmProfile> = emptyList()
+    private var selectedUmProfile: UserManagerService.UmProfile? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,11 +48,24 @@ class AddByProfileActivity : AppCompatActivity() {
 
         binding.toolbar.setNavigationOnClickListener { finish() }
         binding.btnGenerate.setOnClickListener { onGenerateClicked() }
+        binding.toggleSystem.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (isChecked) {
+                mode = if (checkedId == R.id.btnUmMode) GenMode.USER_MANAGER else GenMode.HOTSPOT
+                loadProfiles()
+            }
+        }
 
         loadProfiles()
     }
 
     private fun loadProfiles() {
+        when (mode) {
+            GenMode.HOTSPOT -> loadHotspotProfiles()
+            GenMode.USER_MANAGER -> loadUmProfiles()
+        }
+    }
+
+    private fun loadHotspotProfiles() {
         val cred = store.getCredentials() ?: run {
             Toast.makeText(this, "أعدّ الراوتر أولاً", Toast.LENGTH_LONG).show()
             finish(); return
@@ -56,12 +77,62 @@ class AddByProfileActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             val result = service.getProfiles(cred)
+            if (mode != GenMode.HOTSPOT) return@launch // تغيّر الوضع أثناء التحميل
             setLoading(false)
             result.onSuccess { list ->
                 profiles = list
                 if (list.isEmpty()) {
                     binding.tvStatus.setTextColor(getColor(R.color.brand_warning))
                     binding.tvStatus.text = "لا توجد بروفايلات Hotspot على الراوتر"
+                    return@onSuccess
+                }
+                showHotspotProfiles(list)
+            }.onFailure {
+                if (mode == GenMode.HOTSPOT) {
+                    binding.tvStatus.setTextColor(getColor(R.color.brand_error))
+                    binding.tvStatus.text = "تعذّر التحميل: ${it.message}"
+                }
+            }
+        }
+    }
+
+    private fun showHotspotProfiles(list: List<HotspotProfile>) {
+        val names = list.map { it.name }
+        val adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_list_item_1,
+            names
+        )
+        binding.spinnerProfile.setAdapter(adapter)
+        binding.spinnerProfile.setOnItemClickListener { _, _, position, _ ->
+            selectedProfile = profiles.getOrNull(position)
+        }
+        // اختيار افتراضي للأول
+        selectedProfile = list.first()
+        binding.spinnerProfile.setText(list.first().name, false)
+        binding.tvStatus.setTextColor(getColor(R.color.text_secondary))
+        binding.tvStatus.text = "تم تحميل ${list.size} بروفايل"
+    }
+
+    private fun loadUmProfiles() {
+        val cred = store.getCredentials() ?: run {
+            Toast.makeText(this, "أعدّ الراوتر أولاً", Toast.LENGTH_LONG).show()
+            finish(); return
+        }
+
+        binding.tvStatus.setTextColor(getColor(R.color.text_secondary))
+        binding.tvStatus.text = "جاري تحميل بروفايلات اليوزرمنجر من الراوتر..."
+        setLoading(true)
+
+        lifecycleScope.launch {
+            val result = umService.getProfiles(cred)
+            if (mode != GenMode.USER_MANAGER) return@launch // تغيّر الوضع أثناء التحميل
+            setLoading(false)
+            result.onSuccess { list ->
+                umProfiles = list
+                if (list.isEmpty()) {
+                    binding.tvStatus.setTextColor(getColor(R.color.brand_warning))
+                    binding.tvStatus.text = "لا توجد بروفايلات User Manager على الراوتر — أضف بروفايلات أولاً"
                     return@onSuccess
                 }
                 val names = list.map { it.name }
@@ -72,12 +143,13 @@ class AddByProfileActivity : AppCompatActivity() {
                 )
                 binding.spinnerProfile.setAdapter(adapter)
                 binding.spinnerProfile.setOnItemClickListener { _, _, position, _ ->
-                    selectedProfile = profiles[position]
+                    selectedUmProfile = umProfiles.getOrNull(position)
                 }
                 // اختيار افتراضي للأول
-                selectedProfile = list.first()
+                selectedUmProfile = list.first()
                 binding.spinnerProfile.setText(list.first().name, false)
-                binding.tvStatus.text = "تم تحميل ${list.size} بروفايل"
+                binding.tvStatus.setTextColor(getColor(R.color.text_secondary))
+                binding.tvStatus.text = "تم تحميل ${list.size} بروفايل يوزرمنجر"
             }.onFailure {
                 binding.tvStatus.setTextColor(getColor(R.color.brand_error))
                 binding.tvStatus.text = "تعذّر التحميل: ${it.message}"
@@ -86,8 +158,13 @@ class AddByProfileActivity : AppCompatActivity() {
     }
 
     private fun onGenerateClicked() {
-        val profile = selectedProfile ?: run {
-            Toast.makeText(this, "اختر بروفايلاً أولاً", Toast.LENGTH_SHORT).show(); return
+        val profileName: String = when (mode) {
+            GenMode.HOTSPOT -> selectedProfile?.name ?: run {
+                Toast.makeText(this, "اختر بروفايلاً أولاً", Toast.LENGTH_SHORT).show(); return
+            }
+            GenMode.USER_MANAGER -> selectedUmProfile?.name ?: run {
+                Toast.makeText(this, "اختر بروفايلاً أولاً", Toast.LENGTH_SHORT).show(); return
+            }
         }
         val qty = binding.etQuantity.text?.toString()?.toIntOrNull() ?: 0
         val userLen = binding.etUserLen.text?.toString()?.toIntOrNull() ?: 6
@@ -110,15 +187,27 @@ class AddByProfileActivity : AppCompatActivity() {
         binding.tvStatus.text = "جاري إنشاء $qty كرت على الراوتر..."
 
         lifecycleScope.launch {
-            val result = service.generateVouchers(
-                cred = cred,
-                profileName = profile.name,
-                quantity = qty,
-                userLength = userLen,
-                passLength = passLen,
-                priceLabel = if (price > 0) "$price د.ل." else "",
-                validityLabel = validity
-            )
+            val result = if (mode == GenMode.USER_MANAGER) {
+                umService.generateVouchers(
+                    cred = cred,
+                    profileName = profileName,
+                    quantity = qty,
+                    userLength = userLen,
+                    passLength = passLen,
+                    priceLabel = if (price > 0) "$price د.ل." else "",
+                    validityLabel = validity
+                )
+            } else {
+                service.generateVouchers(
+                    cred = cred,
+                    profileName = profileName,
+                    quantity = qty,
+                    userLength = userLen,
+                    passLength = passLen,
+                    priceLabel = if (price > 0) "$price د.ل." else "",
+                    validityLabel = validity
+                )
+            }
             setLoading(false)
             result.onSuccess { vouchers ->
                 binding.tvStatus.setTextColor(getColor(R.color.brand_success))
@@ -126,7 +215,7 @@ class AddByProfileActivity : AppCompatActivity() {
                 showResults(vouchers)
 
                 val sale = SaleRecord(
-                    profile = profile.name,
+                    profile = profileName,
                     quantity = qty,
                     totalAmount = price * qty,
                     note = validity,

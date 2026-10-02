@@ -35,6 +35,8 @@
 
     <!-- توليد الكروت -->
     <string name="add_by_profile_title">توليد كروت بحسب البروفايل</string>
+    <string name="mode_hotspot">الهوتسبوت</string>
+    <string name="mode_user_manager">اليوزرمنجر</string>
     <string name="hint_profile">البروفايل</string>
     <string name="hint_quantity">الكمية</string>
     <string name="hint_user_len">طول اسم المستخدم</string>

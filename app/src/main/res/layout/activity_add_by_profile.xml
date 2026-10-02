@@ -28,12 +28,39 @@
             android:orientation="vertical"
             android:padding="20dp">
 
+            <!-- نوع النظام: هوتسبوت / يوزرمنجر -->
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggleSystem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnHotspotMode"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:text="@string/mode_hotspot" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnUmMode"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/mode_user_manager" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
             <!-- البروفايل -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilProfile"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:hint="@string/hint_profile">
 
                 <AutoCompleteTextView
