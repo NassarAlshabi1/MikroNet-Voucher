@@ -20,6 +20,31 @@ class MoreUnitController extends GetxController {
     Get.toNamed(AppRoutes.maintenance);
   }
 
+  // دالة الانتقال لصفحة أدوات التشخيص
+  void goToDiagnostics() {
+    Get.toNamed(AppRoutes.diagnostics);
+  }
+
+  // دالة الانتقال لصفحة مراقبة الأداء
+  void goToPerformance() {
+    Get.toNamed(AppRoutes.performance);
+  }
+
+  // دالة الانتقال لصفحة إعدادات الشبكة
+  void goToNetwork() {
+    Get.toNamed(AppRoutes.network);
+  }
+
+  // دالة الانتقال لصفحة جدار الحماية
+  void goToFirewall() {
+    Get.toNamed(AppRoutes.firewall);
+  }
+
+  // دالة الانتقال لصفحة إدارة الـ Queue
+  void goToQueues() {
+    Get.toNamed(AppRoutes.queues);
+  }
+
   // دالة إعادة تشغيل النظام (الراوتر)
   void rebootSystem() {
     showConfirmDialog(message: "هل انت متاكد من اعادة تشغيل النظام", onConfirm: _executeReboot);

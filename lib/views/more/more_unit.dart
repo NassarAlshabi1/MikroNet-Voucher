@@ -74,6 +74,54 @@ class MoreUnitPage extends GetView<MoreUnitController> {
                     color: const Color(0xFFEF4444), // أحمر تحذيري للصيانة
                     onTap: controller.goToMaintenance,
                   ),
+
+                  // عنوان قسم التشخيص والشبكات
+                  const SectionTitle(title: "التشخيص والشبكات"),
+
+                  // أدوات التشخيص
+                  MainActionCard(
+                    title: "أدوات التشخيص",
+                    subtitle: "فحص Ping وتتبع مسار الاتصال من الراوتر",
+                    icon: Icons.network_check_rounded,
+                    color: const Color(0xFF6366F1), // بنفسجي للأدوات الفنية
+                    onTap: controller.goToDiagnostics,
+                  ),
+
+                  // مراقبة الأداء
+                  MainActionCard(
+                    title: "مراقبة الأداء",
+                    subtitle: "معالج وذاكرة وسرعة الواجهات لحظيًا",
+                    icon: Icons.speed_rounded,
+                    color: const Color(0xFF10B981), // أخضر للأداء
+                    onTap: controller.goToPerformance,
+                  ),
+
+                  // إعدادات الشبكة IP
+                  MainActionCard(
+                    title: "إعدادات الشبكة IP",
+                    subtitle: "العناوين، كراء DHCP، والمسارات",
+                    icon: Icons.lan_rounded,
+                    color: const Color(0xFF0EA5E9), // سماوي للشبكات
+                    onTap: controller.goToNetwork,
+                  ),
+
+                  // جدار الحماية
+                  MainActionCard(
+                    title: "جدار الحماية",
+                    subtitle: "قواعد الفلترة وNAT مع تفعيل أو تعطيل كل قاعدة",
+                    icon: Icons.security_rounded,
+                    color: const Color(0xFF8B5CF6), // بنفسجي للحماية
+                    onTap: controller.goToFirewall,
+                  ),
+
+                  // إدارة الـ Queue
+                  MainActionCard(
+                    title: "إدارة الـ Queue",
+                    subtitle: "قوائم تحديد السرعة: تفعيل، إيقاف، أو حذف",
+                    icon: Icons.equalizer_rounded,
+                    color: const Color(0xFFF59E0B), // برتقالي لإدارة السرعة
+                    onTap: controller.goToQueues,
+                  ),
                 ],
               ),
             ),

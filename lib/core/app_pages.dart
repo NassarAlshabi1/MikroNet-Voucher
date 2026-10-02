@@ -11,6 +11,16 @@ import 'package:mikronet/controllers/reports/reports_unit_controller.dart';
 import 'package:mikronet/controllers/reports/sales_report_controller.dart';
 import 'package:mikronet/controllers/reports/system_status_report_controller.dart';
 import 'package:mikronet/controllers/sites/dns_settings_controller.dart';
+import 'package:mikronet/controllers/more/diagnostics_controller.dart';
+import 'package:mikronet/controllers/more/performance_controller.dart';
+import 'package:mikronet/controllers/more/network_controller.dart';
+import 'package:mikronet/controllers/more/firewall_controller.dart';
+import 'package:mikronet/controllers/more/queue_controller.dart';
+import 'package:mikronet/views/more/diagnostics_page.dart';
+import 'package:mikronet/views/more/performance_page.dart';
+import 'package:mikronet/views/more/network_page.dart';
+import 'package:mikronet/views/more/firewall_page.dart';
+import 'package:mikronet/views/more/queue_page.dart';
 import 'package:mikronet/views/cards/profiles/add_profile_page.dart';
 import 'package:mikronet/views/cards/profiles/edit_profile_page.dart';
 import 'package:mikronet/views/more/backup_restore_page.dart';
@@ -129,6 +139,11 @@ class AppRoutes {
   static const String backup = '/more/backup';
   static const String interfaces = '/more/interfaces';
   static const String maintenance = '/more/maintenance';
+  static const String diagnostics = '/more/diagnostics';
+  static const String performance = '/more/performance';
+  static const String network = '/more/network';
+  static const String firewall = '/more/firewall';
+  static const String queues = '/more/queues';
   // مسارات إدارة المواقع
 }
 
@@ -292,6 +307,31 @@ class AppPages {
       name: AppRoutes.maintenance,
       page: () => const MaintenancePage(),
       binding: BindingsBuilder(() => Get.lazyPut(() => MaintenanceController())),
+    ),
+    GetPage(
+      name: AppRoutes.diagnostics,
+      page: () => const DiagnosticsPage(),
+      binding: BindingsBuilder(() => Get.lazyPut(() => DiagnosticsController())),
+    ),
+    GetPage(
+      name: AppRoutes.performance,
+      page: () => const PerformancePage(),
+      binding: BindingsBuilder(() => Get.lazyPut(() => PerformanceController())),
+    ),
+    GetPage(
+      name: AppRoutes.network,
+      page: () => const NetworkPage(),
+      binding: BindingsBuilder(() => Get.lazyPut(() => NetworkController())),
+    ),
+    GetPage(
+      name: AppRoutes.firewall,
+      page: () => const FirewallPage(),
+      binding: BindingsBuilder(() => Get.lazyPut(() => FirewallController())),
+    ),
+    GetPage(
+      name: AppRoutes.queues,
+      page: () => const QueuePage(),
+      binding: BindingsBuilder(() => Get.lazyPut(() => QueueController())),
     ),
   ];
 }
