@@ -1,10 +1,11 @@
 plugins {
     alias(libs.plugins.android.application)
-    // يُطبَّق إضافة Firebase فقط إذا وُجد ملف الإعداد
-    // (محلياً: ضع google-services.json في مجلد app، وفي CI يُزوّد كـ Secret)
-    if (file("google-services.json").exists()) {
-        id("com.google.gms.google-services")
-    }
+}
+
+// يُطبَّق إضافة Firebase فقط إذا وُجد ملف الإعداد
+// (محلياً: ضع google-services.json في مجلد app، وفي CI يُزوّد كـ Secret)
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
 }
 
 android {
