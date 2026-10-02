@@ -1,6 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
-    id("com.google.gms.google-services")
+    // يُطبَّق إضافة Firebase فقط إذا وُجد ملف الإعداد
+    // (محلياً: ضع google-services.json في مجلد app، وفي CI يُزوّد كـ Secret)
+    if (file("google-services.json").exists()) {
+        id("com.google.gms.google-services")
+    }
 }
 
 android {
@@ -21,6 +25,36 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            // التوقيع من متغيرات البيئة (GitHub Secrets):
+            // KEYSTORE_BASE64 (ملف .jks مُرمّز Base64) أو KEYSTORE_FILE (مسار)
+            // + KEYSTORE_PASSWORD و KEY_ALIAS و KEY_PASSWORD
+            val b64 = System.getenv("KEYSTORE_BASE64")
+            val ksPath = System.getenv("KEYSTORE_FILE")
+            val storePass = System.getenv("KEYSTORE_PASSWORD")
+            val alias = System.getenv("KEY_ALIAS")
+            val keyPass = System.getenv("KEY_PASSWORD")
+            when {
+                b64 != null && storePass != null && alias != null && keyPass != null -> {
+                    val tmp = File.createTempFile("release-keystore", ".jks")
+                    tmp.writeBytes(java.util.Base64.getDecoder().decode(b64))
+                    tmp.deleteOnExit()
+                    storeFile = tmp
+                    storePassword = storePass
+                    keyAlias = alias
+                    keyPassword = keyPass
+                }
+                ksPath != null && storePass != null && alias != null && keyPass != null -> {
+                    storeFile = file(ksPath)
+                    storePassword = storePass
+                    keyAlias = alias
+                    keyPassword = keyPass
+                }
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -28,6 +62,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // يُوقّع بمفتاح الإصدار إذا توفّر، وإلا بمفتاح debug
+            // حتى يخرج الـ APK قابلًا للتثبيت من CI بدون إعداد إضافي
+            signingConfig = if (signingConfigs.getByName("release").storeFile != null)
+                signingConfigs.getByName("release")
+            else
+                signingConfigs.getByName("debug")
         }
     }
     compileOptions {
